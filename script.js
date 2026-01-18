@@ -115,14 +115,10 @@ function physicsLoop() {
 physicsLoop();
 
 // -----------------------------
-// MULTIPLICARE EMOJI
+// MULTIPLICARE EMOJI – FĂRĂ DUBLARE
 // -----------------------------
 function spawnEmoji(emoji) {
-    for (let i = 0; i < 3; i++) createEmojiInstance(emoji);
-
-    setTimeout(() => {
-        for (let i = 0; i < 3; i++) createEmojiInstance(emoji);
-    }, 300);
+    createEmojiInstance(emoji); // doar 1 emoji, exact cât trimiți în chat
 }
 
 function createEmojiInstance(emoji) {
