@@ -1,4 +1,4 @@
- const ws = new WebSocket("ws://localhost:62024");
+  const ws = new WebSocket("ws://localhost:62024");
 const emojiContainer = document.getElementById("emoji-container");
 
 const emojiRegex = /\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu;
@@ -24,8 +24,11 @@ function spawnPhysicsObject(el) {
         el,
         x: Math.random() * (w - 100),
         y: Math.random() * (h - 100),
-        vx: (Math.random() * 2 - 1) * 5,
-        vy: (Math.random() * 2 - 1) * 5,
+
+        // viteze inițiale mai mari (rapid în Live Studio)
+        vx: (Math.random() * 2 - 1) * 6,
+        vy: (Math.random() * 2 - 1) * 6,
+
         size: el.offsetWidth,
         born: Date.now()
     };
@@ -48,7 +51,9 @@ function explode(obj) {
         emojiContainer.appendChild(p);
 
         const angle = Math.random() * Math.PI * 2;
-        const speed = 7 + Math.random() * 7;
+
+        // explozie mai intensă
+        const speed = 10 + Math.random() * 10;
 
         const vx = Math.cos(angle) * speed;
         const vy = Math.sin(angle) * speed;
@@ -68,9 +73,9 @@ function animateParticle(p, vx, vy) {
         y += vy;
         p.style.left = x + "px";
         p.style.top = y + "px";
-        p.style.opacity = 1 - life / 40;
+        p.style.opacity = 1 - life / 60; // durează mai mult, explozie mai vizibilă
 
-        if (life < 55) requestAnimationFrame(frame);
+        if (life < 60) requestAnimationFrame(frame);
         else p.remove();
     }
     frame();
@@ -84,22 +89,24 @@ function physicsLoop() {
     const w = emojiContainer.clientWidth;
     const h = emojiContainer.clientHeight;
 
-    objects.forEach((obj, i) => {
+    // folosim for clasic ca să nu stricăm indexul când dăm splice
+    for (let i = objects.length - 1; i >= 0; i--) {
+        const obj = objects[i];
         const el = obj.el;
 
-        // MAGNET SPRE CENTRU
+        // MAGNET SPRE CENTRU (ușor redus)
         const cx = w / 2;
         const cy = h / 2;
 
         const dx = cx - obj.x;
         const dy = cy - obj.y;
 
-        obj.vx += dx * 0.0005;
-        obj.vy += dy * 0.0005;
+        obj.vx += dx * 0.0004;
+        obj.vy += dy * 0.0004;
 
-        // FURTUNĂ REDUSĂ
-        obj.vx *= 1.01;
-        obj.vy *= 1.01;
+        // FURTUNĂ (mai agresivă pentru Live Studio)
+        obj.vx *= 1.015;
+        obj.vy *= 1.015;
 
         // BOUNCE LA MARGINI
         obj.x += obj.vx;
@@ -111,13 +118,13 @@ function physicsLoop() {
         el.style.left = obj.x + "px";
         el.style.top = obj.y + "px";
 
-        // EXPLOZIE DUPĂ 5000ms
-        if (now - obj.born > 5000) {
+        // EXPLOZIE DUPĂ 8000ms (8 secunde, nu mai „două ture și gata”)
+        if (now - obj.born > 8000) {
             explode(obj);
             el.remove();
             objects.splice(i, 1);
         }
-    });
+    }
 
     requestAnimationFrame(physicsLoop);
 }
@@ -140,6 +147,7 @@ function createEmojiInstance(emoji) {
     el.textContent = emoji;
 
     el.style.position = "absolute";
+    // dimensiune originală, cum ți-a plăcut
     el.style.fontSize = (40 + Math.random() * 40) + "px";
 
     emojiContainer.appendChild(el);
