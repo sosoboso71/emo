@@ -1,4 +1,4 @@
-  const ws = new WebSocket("ws://localhost:62024");
+ const ws = new WebSocket("ws://localhost:62024");
 const emojiContainer = document.getElementById("emoji-container");
 
 const emojiRegex = /\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu;
@@ -11,7 +11,7 @@ function filterRealEmojis(list) {
 }
 
 // -----------------------------
-// SISTEM FIZIC GLOBAL
+// SISTEM FIZIC ULTRA-LIGHT
 // -----------------------------
 let objects = [];
 
@@ -25,7 +25,7 @@ function spawnPhysicsObject(el) {
         x: Math.random() * (w - 100),
         y: Math.random() * (h - 100),
 
-        // viteze inițiale mai mari (rapid în Live Studio)
+        // viteze simple, rapide
         vx: (Math.random() * 2 - 1) * 6,
         vy: (Math.random() * 2 - 1) * 6,
 
@@ -36,7 +36,7 @@ function spawnPhysicsObject(el) {
 }
 
 // -----------------------------
-// EXPLOZIE MEDIE (6 particule)
+// EXPLOZIE (rămâne neschimbată)
 // -----------------------------
 function explode(obj) {
     const rect = obj.el.getBoundingClientRect();
@@ -51,8 +51,6 @@ function explode(obj) {
         emojiContainer.appendChild(p);
 
         const angle = Math.random() * Math.PI * 2;
-
-        // explozie mai intensă
         const speed = 10 + Math.random() * 10;
 
         const vx = Math.cos(angle) * speed;
@@ -73,7 +71,7 @@ function animateParticle(p, vx, vy) {
         y += vy;
         p.style.left = x + "px";
         p.style.top = y + "px";
-        p.style.opacity = 1 - life / 60; // durează mai mult, explozie mai vizibilă
+        p.style.opacity = 1 - life / 60;
 
         if (life < 60) requestAnimationFrame(frame);
         else p.remove();
@@ -82,43 +80,29 @@ function animateParticle(p, vx, vy) {
 }
 
 // -----------------------------
-// LOOP FIZIC PRINCIPAL
+// LOOP FIZIC – ULTRA-LIGHT
 // -----------------------------
 function physicsLoop() {
     const now = Date.now();
     const w = emojiContainer.clientWidth;
     const h = emojiContainer.clientHeight;
 
-    // folosim for clasic ca să nu stricăm indexul când dăm splice
     for (let i = objects.length - 1; i >= 0; i--) {
         const obj = objects[i];
         const el = obj.el;
 
-        // MAGNET SPRE CENTRU (ușor redus)
-        const cx = w / 2;
-        const cy = h / 2;
-
-        const dx = cx - obj.x;
-        const dy = cy - obj.y;
-
-        obj.vx += dx * 0.0004;
-        obj.vy += dy * 0.0004;
-
-        // FURTUNĂ (mai agresivă pentru Live Studio)
-        obj.vx *= 1.015;
-        obj.vy *= 1.015;
-
-        // BOUNCE LA MARGINI
+        // DOAR DEPLASARE SIMPLĂ
         obj.x += obj.vx;
         obj.y += obj.vy;
 
+        // BOUNCE SIMPLU
         if (obj.x < 0 || obj.x > w - obj.size) obj.vx *= -1;
         if (obj.y < 0 || obj.y > h - obj.size) obj.vy *= -1;
 
         el.style.left = obj.x + "px";
         el.style.top = obj.y + "px";
 
-        // EXPLOZIE DUPĂ 8000ms (8 secunde, nu mai „două ture și gata”)
+        // EXPLOZIE DUPĂ 8 SECUNDE
         if (now - obj.born > 8000) {
             explode(obj);
             el.remove();
@@ -131,7 +115,7 @@ function physicsLoop() {
 physicsLoop();
 
 // -----------------------------
-// MULTIPLICARE EMOJI (3 → 6)
+// MULTIPLICARE EMOJI
 // -----------------------------
 function spawnEmoji(emoji) {
     for (let i = 0; i < 3; i++) createEmojiInstance(emoji);
@@ -147,7 +131,6 @@ function createEmojiInstance(emoji) {
     el.textContent = emoji;
 
     el.style.position = "absolute";
-    // dimensiune originală, cum ți-a plăcut
     el.style.fontSize = (40 + Math.random() * 40) + "px";
 
     emojiContainer.appendChild(el);
@@ -188,7 +171,6 @@ ws.onmessage = (event) => {
             const msg = data.comment || "";
             const user = data.nickname || "";
 
-            // Emoji din mesaj + nume
             let msgEmojis = msg.match(emojiRegex) || [];
             let nameEmojis = user.match(emojiRegex) || [];
 
@@ -197,14 +179,12 @@ ws.onmessage = (event) => {
 
             [...msgEmojis, ...nameEmojis].forEach(spawnEmoji);
 
-            // Emote-uri (imagini din chat)
             if (data.emotes) {
                 data.emotes.forEach(e => {
                     if (e.emoteImageUrl) spawnSticker(e.emoteImageUrl);
                 });
             }
 
-            // Stickere FAN / ABONAT (badgeSceneType 10)
             if (data.userBadges && Array.isArray(data.userBadges)) {
                 data.userBadges.forEach(badge => {
                     if (badge.badgeSceneType === 10 && badge.image) {
