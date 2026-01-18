@@ -1,0 +1,134 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: transparent !important;
+}
+
+#emoji-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Emoji cu efect neon + glow + spin */
+.emoji {
+    position: absolute;
+    font-size: 52px;
+    animation: floatUp 2.8s ease-out forwards, spin 1.2s linear infinite;
+    filter: drop-shadow(0 0 12px #00eaff) drop-shadow(0 0 20px #00eaff);
+    opacity: 0;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(40px) scale(0.6);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-200px) scale(1.4);
+        opacity: 0;
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+/* Animație universală pentru emoji + stickere */
+.floatSpin {
+    animation: drift 3s ease-out forwards, spin 1.5s linear infinite;
+    opacity: 0;
+}
+
+/* Mișcare random în toate direcțiile */
+@keyframes drift {
+    0% {
+        transform: translate(0, 0) scale(0.6);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(
+            calc(-80px + 160px * var(--rx)),
+            calc(-80px + 160px * var(--ry))
+        ) scale(1.3);
+        opacity: 0;
+    }
+}
+
+/* Rotire continuă */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+.emoji {
+    pointer-events: none;
+}
+
+.sticker {
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ff00ff;
+    border-radius: 50%;
+    opacity: 1;
+    pointer-events: none;
+}
+.emoji {
+    pointer-events: none;
+    position: absolute;
+}
+
+.sticker {
+    pointer-events: none;
+    position: absolute;
+}
+
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ff00ff;
+    border-radius: 50%;
+    opacity: 1;
+    pointer-events: none;
+}
+#emoji-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.emoji {
+    pointer-events: none;
+    position: absolute;
+}
+
+.sticker {
+    pointer-events: none;
+    position: absolute;
+}
+
+.particle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #ff00ff;
+    border-radius: 50%;
+    opacity: 1;
+    pointer-events: none;
+}
